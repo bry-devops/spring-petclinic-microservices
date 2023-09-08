@@ -40,12 +40,13 @@ stages:
           publishJUnitResults: true
           testResultsFiles: '**/surefire-reports/TEST-*.xml'
           testRunTitle: 'Unit Test'
+          codeCoverageToolOption: 'JaCoCo'
           javaHomeOption: 'JDKVersion'
           jdkVersionOption: '1.17'
           mavenVersionOption: 'Default'
           mavenAuthenticateFeed: false
           effectivePomSkip: false
-          sonarQubeRunAnalysis: false 
+          sonarQubeRunAnalysis: false
 
       - task: CopyFiles@2
         name: copyjars
