@@ -11,36 +11,54 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
+stages:
+  - stage: Build
+    jobs:
+    - job: build
+      steps:
+      - task: Maven@3
+        name : MavenBuild
+        displayName: Maven Clean and Package
+        inputs:
+          mavenPomFile: 'pom.xml'
+          goals: 'clean package -DskipTests'
+          options: '-Denv=cloud'
+          javaHomeOption: 'JDKVersion'
+          jdkVersionOption: '1.17'
+          mavenVersionOption: 'Default'
+          mavenAuthenticateFeed: false
+          effectivePomSkip: false
+          sonarQubeRunAnalysis: false
 
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'pom.xml'
-    goals: 'clean package'
-    options: '-Denv=cloud'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    testRunTitle: 'Unit Test'
-    codeCoverageToolOption: 'Cobertura'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.17'
-    mavenVersionOption: 'Default'
-    mavenAuthenticateFeed: false
-    effectivePomSkip: false
-    sonarQubeRunAnalysis: false
+      - task: Maven@3
+        name : UnitTest
+        displayName: Maven Test
+        inputs:
+          mavenPomFile: 'pom.xml'
+          goals: 'test'
+          options: '-Denv=cloud'
+          publishJUnitResults: true
+          testResultsFiles: '**/surefire-reports/TEST-*.xml'
+          testRunTitle: 'Unit Test'
+          javaHomeOption: 'JDKVersion'
+          jdkVersionOption: '1.17'
+          mavenVersionOption: 'Default'
+          mavenAuthenticateFeed: false
+          effectivePomSkip: false
+          sonarQubeRunAnalysis: false 
 
-- task: CopyFiles@2
-  name: copyjars
-  displayName: Copy built artifacts to staging directory
-  inputs:
-    sourceFolder: '$(Build.SourcesDirectory)'
-    contents: '**/target/*.jar'
-    flattenFolders: true
-    targetFolder: '$(Build.ArtifactStagingDirectory)'
+      - task: CopyFiles@2
+        name: copyjars
+        displayName: Copy built artifacts to staging directory
+        inputs:
+          sourceFolder: '$(Build.SourcesDirectory)'
+          contents: '**/target/*.jar'
+          flattenFolders: true
+          targetFolder: '$(Build.ArtifactStagingDirectory)'
 
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'build'
-    publishLocation: 'Container'
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'build'
+          publishLocation: 'Container'
 
