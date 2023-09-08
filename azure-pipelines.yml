@@ -38,7 +38,7 @@ stages:
         displayName: Maven Test
         inputs:
           mavenPomFile: 'pom.xml'
-          goals: 'test'
+          goals: '--projects spring-petclinic-admin-server -am  test'
           options: '-Denv=cloud'
           publishJUnitResults: true
           testResultsFiles: '**/surefire-reports/TEST-*.xml'
