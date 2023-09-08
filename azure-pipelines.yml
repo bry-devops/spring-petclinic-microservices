@@ -7,7 +7,10 @@ trigger:
   branches:
     include:
     - master
-
+  paths:
+    include:
+    - spring-petclinic-admin-server
+     
 pool:
   vmImage: 'ubuntu-latest'
 
