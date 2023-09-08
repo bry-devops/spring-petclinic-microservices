@@ -24,7 +24,7 @@ stages:
         displayName: Maven Clean and Package
         inputs:
           mavenPomFile: 'pom.xml'
-          goals: 'clean package -DskipTests'
+          goals: '--projects spring-petclinic-admin-server -am clean package -DskipTests'
           options: '-Denv=cloud'
           javaHomeOption: 'JDKVersion'
           jdkVersionOption: '1.17'
