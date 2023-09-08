@@ -20,6 +20,8 @@ steps:
     options: '-Denv=cloud'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    testRunTitle: 'Unit Test'
+    codeCoverageToolOption: 'Cobertura'
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.17'
     mavenVersionOption: 'Default'
