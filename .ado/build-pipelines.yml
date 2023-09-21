@@ -24,7 +24,7 @@ stages:
         displayName: Maven Clean and Package
         inputs:
           mavenPomFile: 'pom.xml'
-          goals: '--pl spring-petclinic-admin-server -am clean package -DskipTests'
+          goals: 'clean package -DskipTests'
           options: '-Denv=cloud'
           javaHomeOption: 'JDKVersion'
           jdkVersionOption: '1.17'
@@ -38,7 +38,7 @@ stages:
         displayName: Maven Test
         inputs:
           mavenPomFile: 'pom.xml'
-          goals: '--pl spring-petclinic-admin-server  test'
+          goals: 'test'
           options: '-Denv=cloud'
           publishJUnitResults: true
           testResultsFiles: '**/surefire-reports/TEST-*.xml'
