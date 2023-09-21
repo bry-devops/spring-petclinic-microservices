@@ -1,0 +1,68 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - spring-petclinic-admin-server
+     
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+  - stage: Build
+    jobs:
+    - job: build
+      steps:
+      - task: Maven@3
+        name : MavenBuild
+        displayName: Maven Clean and Package
+        inputs:
+          mavenPomFile: 'pom.xml'
+          goals: '--pl spring-petclinic-admin-server -am clean package -DskipTests'
+          options: '-Denv=cloud'
+          javaHomeOption: 'JDKVersion'
+          jdkVersionOption: '1.17'
+          mavenVersionOption: 'Default'
+          mavenAuthenticateFeed: false
+          effectivePomSkip: false
+          sonarQubeRunAnalysis: false
+
+      - task: Maven@3
+        name : UnitTest
+        displayName: Maven Test
+        inputs:
+          mavenPomFile: 'pom.xml'
+          goals: '--pl spring-petclinic-admin-server  test'
+          options: '-Denv=cloud'
+          publishJUnitResults: true
+          testResultsFiles: '**/surefire-reports/TEST-*.xml'
+          testRunTitle: 'Unit Test'
+          codeCoverageToolOption: 'JaCoCo'
+          javaHomeOption: 'JDKVersion'
+          jdkVersionOption: '1.17'
+          mavenVersionOption: 'Default'
+          mavenAuthenticateFeed: false
+          effectivePomSkip: false
+          sonarQubeRunAnalysis: false
+
+      - task: CopyFiles@2
+        name: copyjars
+        displayName: Copy built artifacts to staging directory
+        inputs:
+          sourceFolder: '$(Build.SourcesDirectory)'
+          contents: '**/target/*.jar'
+          flattenFolders: true
+          targetFolder: '$(Build.ArtifactStagingDirectory)'
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'build'
+          publishLocation: 'Container'
+
