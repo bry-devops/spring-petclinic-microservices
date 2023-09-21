@@ -51,18 +51,31 @@ stages:
           effectivePomSkip: false
           sonarQubeRunAnalysis: false
 
+#      - task: CopyFiles@2
+#        name: copyjars
+#        displayName: Copy built artifacts to staging directory
+#        inputs:
+#          sourceFolder: '$(Build.SourcesDirectory)'
+#          contents: '**/target/*.jar'
+#          flattenFolders: true
+#          targetFolder: '$(Build.ArtifactStagingDirectory)'
       - task: CopyFiles@2
-        name: copyjars
-        displayName: Copy built artifacts to staging directory
+        displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
         inputs:
-          sourceFolder: '$(Build.SourcesDirectory)'
-          contents: '**/target/*.jar'
-          flattenFolders: true
-          targetFolder: '$(Build.ArtifactStagingDirectory)'
+          SourceFolder: '$(system.defaultworkingdirectory)'
+          Contents: '**/target/*.?(war|jar)'
+          TargetFolder: '$(build.artifactstagingdirectory)'
+        condition: succeededOrFailed()
+
+#      - task: PublishBuildArtifacts@1
+#        inputs:
+#          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+#          ArtifactName: 'build'
+#          publishLocation: 'Container'
 
       - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifact'
         inputs:
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-          ArtifactName: 'build'
-          publishLocation: 'Container'
-
+          PathtoPublish: '$(build.artifactstagingdirectory)'
+          ArtifactName: drop
+        condition: succeededOrFailed()
